@@ -1,0 +1,59 @@
+:root {
+	--color-text: #fff;
+	--color-highlight: blue;
+	--color-accent: orange;
+	--color-background: #333;
+}
+
+.toggle {
+	background: transparent;
+	height: 24px;
+	width: 71px;
+	cursor: -webkit-grab;
+	cursor: -moz-grab;
+	cursor: grab;
+}
+.toggle:focus { outline: none; }
+.toggle:active {
+	cursor: -webkit-grabbing;
+	cursor: -moz-grabbing;
+	cursor: grabbing;
+}
+
+.toggle,
+.toggle::-moz-range-thumb,
+.toggle::-ms-thumb,
+.toggle::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+}
+
+.toggle,
+.toggle::-webkit-slider-runnable-track,
+.toggle::-webkit-slider-thumb,
+.toggle::-ms-fill-lower,
+.toggle::-ms-fill-upper,
+.toggle::-ms-thumb
+.toggle::-moz-range-progress,
+.toggle::-moz-range-thumb,
+.toggle::-moz-range-track { border-radius: 4px; }
+
+.toggle::-webkit-slider-thumb,
+.toggle::-ms-thumb,
+.toggle::-moz-range-thumb { height: 22px; width: 22px; background: var(--color-text); }
+
+.toggle::-ms-fill-lower,
+.toggle::-moz-range-progress { background-color: var(--color-highlight); height: 100%; }
+
+.toggle::-webkit-slider-runnable-track,
+.toggle::-moz-range-track {
+	padding: 1px;
+	width: 100%;
+	height: 100%;
+	background-color: var(--color-background);
+	border: 1px solid var(--color-background);
+}
+
+.toggle:focus::-webkit-slider-runnable-track,
+.toggle:focus::-moz-range-track { box-shadow: 0 0 2px 1px var(--color-accent); }
