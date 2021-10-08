@@ -1,44 +1,41 @@
 :root {
-	--color-text: #fff;
-	--color-highlight: rgb(49, 84, 166);
-	--color-background: #333;
-	--width: 70px;
+	--background-color: #333;
+	--border: 1px solid #eee;
 	--border-radius: 25px;
-	--handle-size: 20px;
-	--color-handle: #eee;
-	--color-focus: orange;
-	--handle-margin: 1px;
+	--width: 70px;
+	--handle-size: 30px;
+	--handle-highlight: rgb(49, 84, 166);
+	--handle-color: #eee;
 }
 
 .toggle {
 	width: var(--width);
+	border: var(--border);
 	border-radius: var(--border-radius);
+	background: var(--handle-highlight);
 	overflow: hidden;
-	border: 1px solid #eee;
 	user-select: none;
 	-webkit-user-select: none;
-	background-color: var(--color-highlight);
+	cursor: pointer;
 }
+
+.toggle[disabled] { pointer-events: none; opacity: 0.6; }
 
 .toggle-input { display: none; }
 
 .toggle-label {
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
-	width: 100%;
-	height: 100%;
+	background: var(--background-color);
+	display: block;
 	border-radius: inherit;
-	background: var(--color-background);
+	cursor: inherit;
 	transition: margin-left .2s;
 }
 
 .toggle-handle {
-	display: block;
-	border-radius: inherit;
 	width: var(--handle-size);
 	height: var(--handle-size);
-	background: var(--color-handle);
-	margin: var(--handle-margin);
+	background: var(--handle-color);
+	border: 1px solid var(--background-color);
+	display: block;
+	border-radius: inherit;
 }

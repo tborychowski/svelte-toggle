@@ -1,8 +1,9 @@
-<div class="toggle" class:checked="{value}"
-	tabIndex="-1"
+<div class="toggle" class:checked="{value}" disabled="{disabled}"
+	tabIndex="{disabled ? undefined : 0}"
+	on:keydown="{onKey}"
 	on:touchstart={dragStart}
 	on:mousedown={dragStart}
-	on:click="{onclick}">
+	on:click|preventDefault>
 	<label class="toggle-label" bind:this="{label}">
 		<div class="toggle-handle" bind:this="{handle}"></div>
 		<input type="checkbox" class="toggle-input" bind:checked="{value}">
@@ -14,38 +15,40 @@ import { onMount } from 'svelte';
 import { createEventDispatcher } from 'svelte';
 const dispatch = createEventDispatcher();
 
+const getMouseX = e => (e.type === 'touchmove') ? e.touches[0].clientX : e.clientX;
+const getElemWidth = el => el.getBoundingClientRect().width;
+
 export let value = false;
-let label, handle;
-let initialX, currentX, isClick = false, active = false;
-let maxOffset = 38, xOffset = 0;
-let trans;
+export let disabled;
+let label, handle, startX, maxX, currentX = 0;
+let isClick = false, isDragging = false;
+
 
 onMount(() => {
-	const labelWidth = label.getBoundingClientRect().width;
-	const handleWidth = handle.getBoundingClientRect().width;
-	const handleCSS = getComputedStyle(handle);
-	const handleMargins = parseFloat(handleCSS.marginLeft) + parseFloat(handleCSS.marginRight);
-	maxOffset = labelWidth - handleWidth - handleMargins;
-	xOffset = value ? maxOffset : 0;
-	label.style.marginLeft = `${xOffset}px`;
+	maxX = getElemWidth(label) - getElemWidth(handle);
+	setValue();
 });
 
-function onclick (e) {
-	e.preventDefault();
+function setValue (v) {
+	if (typeof v !== 'undefined') value = v;
+	startX = currentX = value ? maxX : 0;
+	label.style.marginLeft = `${currentX}px`;
+	dispatch('change', value);
+}
+
+function onKey (e) {
+	if (e.key === 'Enter' || e.key === ' ') setValue(!value);
 }
 
 function dragStart (e) {
-	active = true;
-	isClick = true;
 	document.addEventListener('mouseup', dragEnd);
 	document.addEventListener('mousemove', drag);
 	document.addEventListener('touchend', dragEnd);
 	document.addEventListener('touchmove', drag);
-	trans = getComputedStyle(label).transition;
 	label.style.transition = 'none';
-
-	if (e.type === 'touchstart') initialX = e.touches[0].clientX - xOffset;
-	else initialX = e.clientX - xOffset;
+	startX = getMouseX(e) - currentX;
+	isDragging = true;
+	isClick = true;
 }
 
 function dragEnd () {
@@ -53,31 +56,21 @@ function dragEnd () {
 	document.removeEventListener('mousemove', drag);
 	document.removeEventListener('touchend', dragEnd);
 	document.removeEventListener('touchmove', drag);
+	label.style.transition = '';
+	isDragging = false;
 
-	if (isClick) xOffset = (xOffset === maxOffset) ? 0 : maxOffset;
-	else xOffset = (xOffset < (maxOffset / 2)) ? 0 : maxOffset;
-
-	label.style.marginLeft = `${xOffset}px`;
-	label.style.transition = trans;
-	initialX = xOffset;
-	active = false;
-
-	value = (xOffset === 0);
-	dispatch('change', value);
+	if (isClick) setValue(!value);
+	else setValue(currentX >= (maxX / 2));
 }
 
-
 function drag (e) {
-	if (!active) return;
+	if (!isDragging) return;
 	isClick = false;
 	e.preventDefault();
-	if (e.type === 'touchmove') currentX = e.touches[0].clientX - initialX;
-	else currentX = e.clientX - initialX;
-	xOffset = currentX;
-	if (xOffset < 0) xOffset = 0;
-	if (xOffset > maxOffset) xOffset = maxOffset;
-
-	label.style.marginLeft = `${xOffset}px`;
+	currentX = getMouseX(e) - startX;
+	if (currentX < 0) currentX = 0;
+	if (currentX > maxX) currentX = maxX;
+	label.style.marginLeft = `${currentX}px`;
 }
 
 </script>
