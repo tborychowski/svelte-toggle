@@ -1,2 +1,5 @@
 Svelte Toggle
 =============
+
+- [ ] accessibility
+- [ ] keyboard
