@@ -6,7 +6,7 @@
 	on:click|preventDefault>
 	<label class="toggle-label" bind:this="{label}">
 		<div class="toggle-handle" bind:this="{handle}"></div>
-		<input type="checkbox" class="toggle-input" bind:checked="{value}">
+		<input {id} type="checkbox" class="toggle-input" bind:checked="{value}">
 	</label>
 </div>
 
@@ -18,26 +18,30 @@ const dispatch = createEventDispatcher();
 const getMouseX = e => (e.type === 'touchmove') ? e.touches[0].clientX : e.clientX;
 const getElemWidth = el => el.getBoundingClientRect().width;
 
+export let id;
 export let value = false;
-export let disabled;
+export let disabled = undefined;
 let label, handle, startX, maxX, currentX = 0;
 let isClick = false, isDragging = false;
 
 
 onMount(() => {
 	maxX = getElemWidth(label) - getElemWidth(handle);
-	setValue();
+	setValue(undefined, true);
 });
 
-function setValue (v) {
+function setValue (v, skipEvent = false) {
 	if (typeof v !== 'undefined') value = v;
 	startX = currentX = value ? maxX : 0;
 	label.style.marginLeft = `${currentX}px`;
-	dispatch('change', value);
+	if (!skipEvent) dispatch('change', value);
 }
 
 function onKey (e) {
-	if (e.key === 'Enter' || e.key === ' ') setValue(!value);
+	if (e.key === 'Enter' || e.key === ' ') {
+		e.preventDefault();
+		setValue(!value);
+	}
 }
 
 function dragStart (e) {
