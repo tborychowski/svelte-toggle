@@ -1,4 +1,4 @@
-<div class="toggle" class:checked="{value}" disabled="{disabled}"
+<div class="toggle" class:checked="{value}" disabled="{disabled}" bind:this="{el}"
 	tabIndex="{disabled ? undefined : 0}"
 	on:keydown="{onKey}"
 	on:touchstart={dragStart}
@@ -9,31 +9,34 @@
 		<input {id} type="checkbox" class="toggle-input" bind:checked="{value}">
 	</label>
 </div>
-
 <script>
 import { onMount } from 'svelte';
 import { createEventDispatcher } from 'svelte';
 const dispatch = createEventDispatcher();
 
 const getMouseX = e => (e.type === 'touchmove') ? e.touches[0].clientX : e.clientX;
-const getElemWidth = el => el.getBoundingClientRect().width;
+const getElemWidth = el => {
+	const css = getComputedStyle(el);
+	const borders = parseFloat(css.borderLeftWidth) + parseFloat(css.borderRightWidth);
+	return el.getBoundingClientRect().width - borders;
+};
 
 export let id;
 export let value = false;
 export let disabled = undefined;
-let label, handle, startX, maxX, currentX = 0;
+let el, label, handle, startX, maxX, minX, currentX = 0;
 let isClick = false, isDragging = false;
 
-
 onMount(() => {
-	maxX = getElemWidth(label) - getElemWidth(handle);
+	maxX = getElemWidth(el);
+	minX = getElemWidth(handle);
 	setValue(undefined, true);
 });
 
 function setValue (v, skipEvent = false) {
 	if (typeof v !== 'undefined') value = v;
-	startX = currentX = value ? maxX : 0;
-	label.style.marginLeft = `${currentX}px`;
+	startX = currentX = value ? maxX : minX;
+	label.style.width = `${currentX}px`;
 	if (!skipEvent) dispatch('change', value);
 }
 
@@ -62,9 +65,8 @@ function dragEnd () {
 	document.removeEventListener('touchmove', drag);
 	label.style.transition = '';
 	isDragging = false;
-
 	if (isClick) setValue(!value);
-	else setValue(currentX >= (maxX / 2));
+	else setValue(currentX - minX >= (maxX - minX) / 2);
 }
 
 function drag (e) {
@@ -72,9 +74,8 @@ function drag (e) {
 	isClick = false;
 	e.preventDefault();
 	currentX = getMouseX(e) - startX;
-	if (currentX < 0) currentX = 0;
 	if (currentX > maxX) currentX = maxX;
-	label.style.marginLeft = `${currentX}px`;
+	if (currentX < minX) currentX = minX;
+	label.style.width = `${currentX}px`;
 }
-
 </script>

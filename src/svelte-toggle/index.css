@@ -1,34 +1,46 @@
 :root {
 	--background-color: #333;
 	--border: 1px solid #eee;
-	--border-radius: 25px;
+	--border-radius: 5px;
 	--width: 70px;
 	--handle-size: 30px;
 	--handle-highlight: rgb(49, 84, 166);
 	--handle-color: #eee;
+	--color-accent: orange;
 }
 
 .toggle {
 	width: var(--width);
 	border: var(--border);
 	border-radius: var(--border-radius);
-	background: var(--handle-highlight);
-	overflow: hidden;
+	background: var(--background-color);
 	user-select: none;
 	-webkit-user-select: none;
 	cursor: pointer;
 }
 
-.toggle[disabled] { pointer-events: none; opacity: 0.6; }
+.toggle[disabled] {
+	pointer-events: none;
+	opacity: 0.6;
+}
 
-.toggle-input { display: none; }
+.toggle:focus {
+	outline: none;
+	box-shadow: 0 0 2px 1px  var(--color-accent);
+}
+
+
+.toggle-input {
+	display: none;
+}
 
 .toggle-label {
-	background: var(--background-color);
+	background: var(--handle-highlight);
+	width: var(--handle-size);
 	display: block;
 	border-radius: inherit;
 	cursor: inherit;
-	transition: margin-left .2s;
+	transition: width .2s;
 }
 
 .toggle-handle {
@@ -38,4 +50,5 @@
 	border: 1px solid var(--background-color);
 	display: block;
 	border-radius: inherit;
+	margin: 0 0 0 auto;
 }
