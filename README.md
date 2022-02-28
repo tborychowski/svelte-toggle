@@ -1,8 +1,1 @@
-Svelte Toggle
-=============
-
-The perfect toggle component in Svelte:
-- allows `click` as well as `drag` to toggle
-- keyboard support: press `Enter` or `Space` to toggle
-- accessible (based on a checkbox input)
-- no bloat & dependencies, just 80 lines of code
+## Deprecated in favour of [simple-ui-components-in-svelte](https://github.com/tborychowski/simple-ui-components-in-svelte).
